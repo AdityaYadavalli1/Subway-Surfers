@@ -66,7 +66,29 @@ function main() {
 // make any tick changes here
 function tickelements() {
    // c.rotation += 0.02;
+   // c.pos[2] -= 0.02;
 }
+
+// take input here
+document.addEventListener('keydown', function(event) {
+    if(event.keyCode == 37) {
+        // alert('Left was pressed');
+        c.pos[0] -= 2;
+    }
+    else if(event.keyCode == 39) {
+        // alert('Right was pressed');
+        c.pos[0] += 2;
+    }
+    else if(event.keyCode == 38) {
+        // alert('Right was pressed');
+        c.pos[1] += 2;
+    }
+    else if(event.keyCode == 40) {
+        // alert('Right was pressed');
+        c.pos[1] -= 2;
+    }
+});
+
 function drawScene(gl, programInfo, buffers, deltaTime) {
   gl.clearColor(0.0, 0.0, 0.0, 1.0);  // Clear to black, fully opaque
   gl.clearDepth(1.0);                 // Clear everything
