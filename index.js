@@ -7,14 +7,19 @@ main();
 //
 var c;
 var c1;
-
+var cameraZ = 0;
+// var cameraPosition = [2, 10, -10];
+var up = [0.0, 1.0, 0.0];
+var target = [0.0, 0.0, 0.0];
+var eye = [0.0, 0.0 , 13.0];
 function main() {
   const canvas = document.querySelector('#glcanvas');
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
  // make objects here
   // If we don't have a GL context, give up now
-  c = new cube(gl, [2, 5.0, -13.0]);
+  c = new cube(gl, [0.0, 0.0, 0.0]);
   c1 = new cube(gl, [1.5, 0.0, -13.0]);
+  c2 = new cube(gl, [1.5, 0.0, -16.0]);
 
   if (!gl) {
     alert('Unable to initialize WebGL. Your browser or machine may not support it.');
@@ -55,10 +60,9 @@ function main() {
     const deltaTime = now - then;
     then = now;
     // c.rotation += 0.02;
-
+    tickelements()
     drawScene(gl, programInfo, deltaTime);
     // tick elements and tickinput
-    tickelements()
     requestAnimationFrame(render);
   }
   requestAnimationFrame(render);
@@ -66,26 +70,28 @@ function main() {
 // make any tick changes here
 function tickelements() {
    // c.rotation += 0.02;
-   // c.pos[2] -= 0.02;
+   c.pos[2] -= 0.04;
+   // console.log(c.pos);
+   // cameraPosition[2] -= 0.02;
+   // console.log(cameraPosition);
+   // cameraZ -= 0.02;
 }
 
 // take input here
+var xvelocity = 2;
+var yvelocity = 2;
 document.addEventListener('keydown', function(event) {
     if(event.keyCode == 37) {
-        // alert('Left was pressed');
-        c.pos[0] -= 2;
+        c.pos[0] -= xvelocity;
     }
     else if(event.keyCode == 39) {
-        // alert('Right was pressed');
-        c.pos[0] += 2;
+        c.pos[0] += xvelocity;
     }
     else if(event.keyCode == 38) {
-        // alert('Right was pressed');
-        c.pos[1] += 2;
+        c.pos[1] += yvelocity;
     }
     else if(event.keyCode == 40) {
-        // alert('Right was pressed');
-        c.pos[1] -= 2;
+        c.pos[1] -= yvelocity;
     }
 });
 
@@ -136,17 +142,22 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
   //             modelViewMatrix,
   //             cubeRotation,
   //             [0.0, 1.0, 1.0]);
-  var cameraMatrix = mat4.create();
-    mat4.translate(cameraMatrix, cameraMatrix, [2, 10, 0]);
-    var cameraPosition = [
-      cameraMatrix[12],
-      cameraMatrix[13],
-      cameraMatrix[14],
-    ];
-
-    var up = [0, 1, 0];
-
-    mat4.lookAt(cameraMatrix, cameraPosition, [3.0, 5.0, -13.0], up);
+    // var cameraMatrix = mat4.create();
+    // mat4.translate(cameraMatrix, cameraMatrix, [2, 10, 0]);
+    // var cameraPosition = [
+    //   cameraMatrix[12],
+    //   cameraMatrix[13],
+    //   cameraMatrix[14],
+    // ];
+    // console.log(c.pos)
+    // cameraPosition[2] -= cameraZ;
+    // console.log(cameraPosition);
+    // var
+    // var up = [0, 1, 0];
+    eye[2] = c.pos[2] + 13.0;
+    target[2] = c.pos[2];
+    var cameraMatrix = mat4.create();
+    mat4.lookAt(cameraMatrix, eye, target, up);
 
     var viewMatrix = cameraMatrix;//mat4.create();
 
@@ -156,7 +167,9 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
 
     mat4.multiply(viewProjectionMatrix, projectionMatrix, viewMatrix);
     c.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
-    c1.drawCube(gl, projectionMatrix, programInfo, deltaTime);
+    c1.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
+    c2.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
+
 
 }
 
