@@ -1,5 +1,5 @@
 let cube = class {
-    constructor(gl, pos) {
+    constructor(gl, pos, scale) {
         this.positionBuffer = gl.createBuffer();
         gl.bindBuffer(gl.ARRAY_BUFFER, this.positionBuffer);
 
@@ -39,6 +39,8 @@ let cube = class {
         this.rotation = 0;
 
         this.pos = pos;
+
+        this.scale = scale;
 
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(this.positions), gl.STATIC_DRAW);
 
@@ -104,6 +106,11 @@ let cube = class {
             modelViewMatrix,
             modelViewMatrix,
             this.pos
+        );
+        mat4.scale(
+            modelViewMatrix,
+            modelViewMatrix,
+            this.scale,
         );
         //this.rotation += Math.PI / (((Math.random()) % 100) + 50);
 

@@ -17,9 +17,9 @@ function main() {
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
  // make objects here
   // If we don't have a GL context, give up now
-  c = new cube(gl, [0.0, 0.0, 0.0]);
-  c1 = new cube(gl, [2.0, 0.0, -13.0]);
-  c2 = new cube(gl, [2.0, 0.0, -16.0]);
+  c = new cube(gl, [0.0, 0.0, 0.0],[1.0, 1.0, 1.0]);
+  c1 = new cube(gl, [2.0, 0.0, -13.0], [1.0, 1.0, 3.0]);
+  c2 = new cube(gl, [2.0, 0.0, -16.0], [1.0, 1.0, 3.0]);
 
   if (!gl) {
     alert('Unable to initialize WebGL. Your browser or machine may not support it.');
@@ -154,14 +154,14 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
     mat4.multiply(viewProjectionMatrix, projectionMatrix, viewMatrix);
     c.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
     c1.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
-    c2.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
+    // c2.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
 
 
 }
 function detect_collision_x() {
   if (Math.abs(c.pos[0] - c1.pos[0]) <= 0.5) {
-    if (Math.abs(c.pos[2] - c1.pos[2]) <= 0.5) {
-      if (c.pos[1] == c1.pos[1]) { // height same that means it has collided in x direction
+    if (Math.abs(c.pos[2] - c1.pos[2]) <= 3.0) {
+      if (c.pos[1] == c1.pos[1]) { // height same that means it has collided in x direction (whenever hit reduce the player's speed for the next 5 seconds)
           console.log('LOL');
           c.pos[0] -= 1;
       }
