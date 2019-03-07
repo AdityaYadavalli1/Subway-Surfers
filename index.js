@@ -7,8 +7,8 @@ main();
 //
 var c;
 var c1;
-var cameraZ = 0;
-// var cameraPosition = [2, 10, -10];
+var c2;
+var isJump = 0;
 var up = [0.0, 1.0, 0.0];
 var target = [0.0, 0.0, 0.0];
 var eye = [0.0, 0.0 , 13.0];
@@ -18,8 +18,8 @@ function main() {
  // make objects here
   // If we don't have a GL context, give up now
   c = new cube(gl, [0.0, 0.0, 0.0]);
-  c1 = new cube(gl, [1.5, 0.0, -13.0]);
-  c2 = new cube(gl, [1.5, 0.0, -16.0]);
+  c1 = new cube(gl, [2.0, 0.0, -13.0]);
+  c2 = new cube(gl, [2.0, 0.0, -16.0]);
 
   if (!gl) {
     alert('Unable to initialize WebGL. Your browser or machine may not support it.');
@@ -61,6 +61,8 @@ function main() {
     then = now;
     // c.rotation += 0.02;
     tickelements()
+    detect_collision_x()
+    // detect_collision_y()
     drawScene(gl, programInfo, deltaTime);
     // tick elements and tickinput
     requestAnimationFrame(render);
@@ -68,18 +70,26 @@ function main() {
   requestAnimationFrame(render);
 }
 // make any tick changes here
+var gravity = 0;
 function tickelements() {
-   // c.rotation += 0.02;
+
    c.pos[2] -= 0.04;
-   // console.log(c.pos);
-   // cameraPosition[2] -= 0.02;
-   // console.log(cameraPosition);
-   // cameraZ -= 0.02;
-}
+   if (isJump == 1) {
+     if(c.pos[1] > 0) {
+       gravity -= 0.001;
+       c.pos[1] += gravity;
+     }
+     else {
+       c.pos[1] = 0;
+       isJump = 0;
+       gravity = 0;
+     }
+   }
+ }
 
 // take input here
 var xvelocity = 2;
-var yvelocity = 2;
+var yvelocity = 4;
 document.addEventListener('keydown', function(event) {
     if(event.keyCode == 37) {
         c.pos[0] -= xvelocity;
@@ -87,8 +97,12 @@ document.addEventListener('keydown', function(event) {
     else if(event.keyCode == 39) {
         c.pos[0] += xvelocity;
     }
-    else if(event.keyCode == 38) {
+    else if(event.keyCode == 38) { //up
+      if (isJump == 0) {
         c.pos[1] += yvelocity;
+        isJump = 1;
+      }
+        // isJump = 1;
     }
     else if(event.keyCode == 40) {
         c.pos[1] -= yvelocity;
@@ -126,40 +140,12 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
                    zNear,
                    zFar);
 
-  // Set the drawing position to the "identity" point, which is
-  // the center of the scene.
-  // const modelViewMatrix = mat4.create();
-  //
-  // // Now move the drawing position a bit to where we want to
-  // // start drawing the square.
-  //
-  // mat4.translate(modelViewMatrix,     // destination matrix
-  //                modelViewMatrix,     // matrix to translate
-  //                [-0.0, 0.0, -6.0]);  // amount to translate
-  //
-  // //Write your code to Rotate the cube here//
-  // mat4.rotate(modelViewMatrix,
-  //             modelViewMatrix,
-  //             cubeRotation,
-  //             [0.0, 1.0, 1.0]);
-    // var cameraMatrix = mat4.create();
-    // mat4.translate(cameraMatrix, cameraMatrix, [2, 10, 0]);
-    // var cameraPosition = [
-    //   cameraMatrix[12],
-    //   cameraMatrix[13],
-    //   cameraMatrix[14],
-    // ];
-    // console.log(c.pos)
-    // cameraPosition[2] -= cameraZ;
-    // console.log(cameraPosition);
-    // var
-    // var up = [0, 1, 0];
     eye[2] = c.pos[2] + 13.0;
     target[2] = c.pos[2];
     var cameraMatrix = mat4.create();
     mat4.lookAt(cameraMatrix, eye, target, up);
 
-    var viewMatrix = cameraMatrix;//mat4.create();
+    var viewMatrix = cameraMatrix;
 
     //mat4.invert(viewMatrix, cameraMatrix);
 
@@ -172,7 +158,30 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
 
 
 }
-
+function detect_collision_x() {
+  if (Math.abs(c.pos[0] - c1.pos[0]) <= 0.5) {
+    if (Math.abs(c.pos[2] - c1.pos[2]) <= 0.5) {
+      if (c.pos[1] == c1.pos[1]) { // height same that means it has collided in x direction
+          console.log('LOL');
+          c.pos[0] -= 1;
+      }
+      else {
+        if (Math.abs(c.pos[1] - c1.pos[1]) <= 2) { // y collision that means it stays on top
+            console.log('LOL');
+            c.pos[1] = c1.pos[1] + 2;
+        }
+      }
+    }
+  }
+}
+// function detect_collision_y() {
+//   if (Math.abs(c.pos[1] - c1.pos[1]) < 0.5) {
+//     if (Math.abs(c.pos[2] - c1.pos[2]) < 0.5) {
+//       c.pos[1] -= 1;
+//     }
+//   }
+// }
+// one more if condition for these collisions and we are done bois
 //
 // Initialize a shader program, so WebGL knows how to draw our data
 //
