@@ -44,3 +44,146 @@ function loadShader(gl, type, source) {
 
   return shader;
 }
+
+function create3Dobj(gl, obj) {
+  positionBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
+  obj.position = [
+    // Front face
+         -1.0, -1.0, 1.0,
+         1.0, -1.0, 1.0,
+         1.0, 1.0, 1.0,
+         -1.0, 1.0, 1.0,
+         //Back Face
+         -1.0, -1.0, -1.0,
+         1.0, -1.0, -1.0,
+         1.0, 1.0, -1.0,
+         -1.0, 1.0, -1.0,
+         //Top Face
+         -1.0, 1.0, -1.0,
+         1.0, 1.0, -1.0,
+         1.0, 1.0, 1.0,
+         -1.0, 1.0, 1.0,
+         //Bottom Face
+         -1.0, -1.0, -1.0,
+         1.0, -1.0, -1.0,
+         1.0, -1.0, 1.0,
+         -1.0, -1.0, 1.0,
+         //Left Face
+         -1.0, -1.0, -1.0,
+         -1.0, 1.0, -1.0,
+         -1.0, 1.0, 1.0,
+         -1.0, -1.0, 1.0,
+         //Right Face
+         1.0, -1.0, -1.0,
+         1.0, 1.0, -1.0,
+         1.0, 1.0, 1.0,
+         1.0, -1.0, 1.0,
+  ];
+  obj.indices = [
+        0, 1, 2,    0, 2, 3, // front
+        4, 5, 6,    4, 6, 7,
+        8, 9, 10,   8, 10, 11,
+        12, 13, 14, 12, 14, 15,
+        16, 17, 18, 16, 18, 19,
+        20, 21, 22, 20, 22, 23,
+  ];
+  obj.faceColors = [
+        [1.0,  0.0,  1.0,  0.5],    // Left face: purple
+        [1.0,  0.0,  0.0,  1.0],    // Left face: purple
+        [1.0,  1.0,  0.0,  1.0],    // Left face: purple
+        [0.0,  0.0,  1.0,  1.0],    // Left face: purple
+        [1.0,  1.0,  1.0,  1.0],    // Left face: purple
+        [0.0,  1.0,  1.0,  1.0],    // Left face: purple
+  ];
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(obj.position), gl.STATIC_DRAW);
+  var colors = [];
+  for (var j = 0; j < obj.faceColors.length; ++j) {
+      const c = obj.faceColors[j];
+
+      // Repeat each color four times for the four vertices of the face
+      colors = colors.concat(c, c, c, c);
+  }
+
+  const colorBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
+  const indexBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(obj.indices), gl.STATIC_DRAW);
+
+  return {
+    position: positionBuffer,
+    color: colorBuffer,
+    indices: indexBuffer,
+  }
+}
+
+async function loadObject(filedata) {
+  var vertex_buffer_data = [];
+  var points = [];
+  var normals = [];
+  var normal_buffer_data = [];
+  var textures = [];
+  var texture_buffer_data = [];
+  var lines = filedata.split('\n');
+  lines = lines.map(s => s.trim());
+  for (var j=0; j<lines.length; ++j) {
+    var words = lines[j].split(' ');
+    if(words[0] == "v") {
+      var cur_point = [];
+      cur_point[0]=parseFloat(words[1]);
+      cur_point[1]=parseFloat(words[2]);
+      cur_point[2]=parseFloat(words[3]);
+      points.push(cur_point);
+    }
+    else if (words[0] == "vn") {
+      var cur_point = [];
+      cur_point[0]=parseFloat(words[1]);
+      cur_point[1]=parseFloat(words[2]);
+      cur_point[2]=parseFloat(words[3]);
+      normals.push(cur_point);
+    }
+    else if (words[0] == "vt") {
+      var cur_point = [];
+      cur_point[0] = parseFloat(words[1]);
+      cur_point[1] = parseFloat(words[2]);
+      textures.push(cur_point);
+
+    }
+    else if (words[0] == 'f') {
+      for (let wc = 1; wc < 4; wc++) {
+        let vxdata = words[wc].split('/')
+        let p = parseInt(vxdata[0]) - 1
+        let t = parseInt(vxdata[1]) - 1
+        let n = parseInt(vxdata[2]) - 1
+        vertex_buffer_data.push(points[p][0])
+        vertex_buffer_data.push(points[p][1])
+        vertex_buffer_data.push(points[p][2])
+
+        texture_buffer_data.push(textures[t][0])
+        texture_buffer_data.push(textures[t][1])
+
+        normal_buffer_data.push(normals[n][0])
+        normal_buffer_data.push(normals[n][1])
+        normal_buffer_data.push(normals[n][2])
+      }
+    }
+  }
+  return {
+    vertices: vertex_buffer_data,
+    texture: texture_buffer_data,
+    normals: normal_buffer_data,
+  }
+}
+
+function handleLoadedTexture(texture) {
+  gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
+  gl.bindTexture(gl.TEXTURE_2D, texture);
+  gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR_MIPMAP_NEAREST);
+  gl.generateMipmap(gl.TEXTURE_2D);
+
+  gl.bindTexture(gl.TEXTURE_2D, null);
+}

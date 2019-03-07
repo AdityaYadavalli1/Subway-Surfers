@@ -1,0 +1,8 @@
+newmtl ko_opass
+Ka 0.972549 0.972549 0.972549
+Kd 0.7843137 0.7843137 0.7843137
+d 1
+Tr 1
+map_Ka ko_opass.png
+map_Kd ko_opass.png
+map_d ko_opass.png
