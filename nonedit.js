@@ -45,72 +45,30 @@ function loadShader(gl, type, source) {
   return shader;
 }
 
-function create3Dobj(gl, obj) {
-  positionBuffer = gl.createBuffer();
+function create3Dobj(gl, obj, buffer) {
+  var positionBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, positionBuffer);
-  obj.position = [
-    // Front face
-         -1.0, -1.0, 1.0,
-         1.0, -1.0, 1.0,
-         1.0, 1.0, 1.0,
-         -1.0, 1.0, 1.0,
-         //Back Face
-         -1.0, -1.0, -1.0,
-         1.0, -1.0, -1.0,
-         1.0, 1.0, -1.0,
-         -1.0, 1.0, -1.0,
-         //Top Face
-         -1.0, 1.0, -1.0,
-         1.0, 1.0, -1.0,
-         1.0, 1.0, 1.0,
-         -1.0, 1.0, 1.0,
-         //Bottom Face
-         -1.0, -1.0, -1.0,
-         1.0, -1.0, -1.0,
-         1.0, -1.0, 1.0,
-         -1.0, -1.0, 1.0,
-         //Left Face
-         -1.0, -1.0, -1.0,
-         -1.0, 1.0, -1.0,
-         -1.0, 1.0, 1.0,
-         -1.0, -1.0, 1.0,
-         //Right Face
-         1.0, -1.0, -1.0,
-         1.0, 1.0, -1.0,
-         1.0, 1.0, 1.0,
-         1.0, -1.0, 1.0,
-  ];
-  obj.indices = [
-        0, 1, 2,    0, 2, 3, // front
-        4, 5, 6,    4, 6, 7,
-        8, 9, 10,   8, 10, 11,
-        12, 13, 14, 12, 14, 15,
-        16, 17, 18, 16, 18, 19,
-        20, 21, 22, 20, 22, 23,
-  ];
-  obj.faceColors = [
-        [1.0,  0.0,  1.0,  0.5],    // Left face: purple
-        [1.0,  0.0,  0.0,  1.0],    // Left face: purple
-        [1.0,  1.0,  0.0,  1.0],    // Left face: purple
-        [0.0,  0.0,  1.0,  1.0],    // Left face: purple
-        [1.0,  1.0,  1.0,  1.0],    // Left face: purple
-        [0.0,  1.0,  1.0,  1.0],    // Left face: purple
-  ];
+  obj.position = buffer.vertices;
+  obj.indices =  buffer.normals;
+  obj.faceColors = buffer.texture;
   gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(obj.position), gl.STATIC_DRAW);
-  var colors = [];
-  for (var j = 0; j < obj.faceColors.length; ++j) {
-      const c = obj.faceColors[j];
-
-      // Repeat each color four times for the four vertices of the face
-      colors = colors.concat(c, c, c, c);
-  }
-
-  const colorBuffer = gl.createBuffer();
+  // var colors = [];
+  // for (var j = 0; j < obj.faceColors.length; ++j) {
+  //     const c = obj.faceColors[j];
+  //
+  //     // Repeat each color four times for the four vertices of the face
+  //     colors = colors.concat(c, c, c, c);
+  // }
+  // console.log(colors.length);
+  // console.log(obj.faceColors.length);
+  var colorBuffer = gl.createBuffer();
   gl.bindBuffer(gl.ARRAY_BUFFER, colorBuffer);
-  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(colors), gl.STATIC_DRAW);
-  const indexBuffer = gl.createBuffer();
-  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, indexBuffer);
-  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(obj.indices), gl.STATIC_DRAW);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(obj.faceColors), gl.STATIC_DRAW);
+
+  var indexBuffer = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, indexBuffer);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(obj.indices), gl.STATIC_DRAW);
+
 
   return {
     position: positionBuffer,
@@ -152,7 +110,7 @@ async function loadObject(filedata) {
 
     }
     else if (words[0] == 'f') {
-      for (let wc = 1; wc < 4; wc++) {
+      for (let wc = 1; wc < words.length; wc++) {
         let vxdata = words[wc].split('/')
         let p = parseInt(vxdata[0]) - 1
         let t = parseInt(vxdata[1]) - 1
@@ -177,7 +135,7 @@ async function loadObject(filedata) {
   }
 }
 
-function handleLoadedTexture(texture) {
+function handleLoadedTexture(gl, texture) {
   gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL, true);
   gl.bindTexture(gl.TEXTURE_2D, texture);
   gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, texture.image);
@@ -186,4 +144,16 @@ function handleLoadedTexture(texture) {
   gl.generateMipmap(gl.TEXTURE_2D);
 
   gl.bindTexture(gl.TEXTURE_2D, null);
+}
+
+function loadTexture(gl, src, material, load) {
+  var texture = gl.createTexture();
+  texture.image = new Image();
+  texture.image.onload = function () {
+    handleLoadedTexture(gl, texture)
+    material.texture = texture
+    load = true;
+  }
+  texture.image.src = src;
+  return texture;
 }

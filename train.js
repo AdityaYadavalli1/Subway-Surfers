@@ -1,4 +1,4 @@
-let cube = class {
+let train = class {
     constructor(gl, pos, scale) {
         this.positions = [];
         this.indices  = [];
@@ -11,20 +11,22 @@ let cube = class {
         this.rotation = 180 * Math.PI/180;
         this.load = false;
         this.pos = pos;
+
         this.scale = scale;
+
     }
     start(gl) {
-      fetch("./models/objects/Jake/Jake/Jake.obj")
+      fetch("./models/objects/Subway/Subway/Subway.obj")
       .then(response => response.text())
       .then(text => loadObject(text))
       .then(buffer => {
           this.obj = create3Dobj(gl, this.object, buffer);
           this.bufferr = {
             position: this.obj.position,
-            uvs: this.obj.color,
-            normals: this.obj.indices
+            color: this.obj.color,
+            indices: this.obj.indices
           };
-          loadTexture(gl, "./models/objects/Jake/Jake/avatar_slick.png", this.material);
+          loadTexture(gl, "./models/objects/Subway/Subway/trains.png", this.material);
           this.vertexCountt = buffer.vertices.length / 3;
           this.load = true;
         });
@@ -73,7 +75,7 @@ let cube = class {
             const normalize = false;
             const stride = 0;
             const offset = 0;
-            gl.bindBuffer(gl.ARRAY_BUFFER, this.bufferr.uvs);
+            gl.bindBuffer(gl.ARRAY_BUFFER, this.bufferr.color);
             gl.vertexAttribPointer(
                 programInfo.attribLocations.vertexColor,
                 numComponents,
@@ -86,7 +88,7 @@ let cube = class {
         }
 
         // Tell WebGL which indices to use to index the vertices
-        // gl.bindBuffer(gl.ARRAY_BUFFER, this.bufferr.indices);
+        gl.bindBuffer(gl.ARRAY_BUFFER, this.bufferr.indices);
 
         // Tell WebGL to use our program when drawing
 

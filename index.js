@@ -7,20 +7,22 @@ main();
 //
 var c;
 var c1;
-// var c2;
+var c2;
 var isJump = 0;
 var up = [0.0, 1.0, 0.0];
 var target = [0.0, 0.0, 0.0];
-var eye = [0.0, 0.0 , 13.0];
+var eye = [0.0, 3.0 , 13.0];
 function main() {
   const canvas = document.querySelector('#glcanvas');
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
  // make objects here
   // If we don't have a GL context, give up now
-  c = new cube(gl, [0.0, 0.0, 0.0],[1.0, 1.0, 1.0]);
+  c = new cube(gl, [0.0, 0.0, 0.0],[0.2, 0.2, 0.2]);
   c.start(gl);
-  c1 = new cube(gl, [2.0, 0.0, -13.0], [1.0, 1.0, 3.0]);
+  c1 = new train(gl, [2.0, 0.0, -13.0], [0.1, 0.1, 0.1]);
+  c1.start(gl);
   c2 = new cube(gl, [2.0, 0.0, -16.0], [1.0, 1.0, 3.0]);
+  c2.start(gl);
 
   if (!gl) {
     alert('Unable to initialize WebGL. Your browser or machine may not support it.');
@@ -103,7 +105,6 @@ document.addEventListener('keydown', function(event) {
         c.pos[1] += yvelocity;
         isJump = 1;
       }
-        // isJump = 1;
     }
     else if(event.keyCode == 40) {
         c.pos[1] -= yvelocity;
@@ -153,23 +154,28 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
     var viewProjectionMatrix = mat4.create();
 
     mat4.multiply(viewProjectionMatrix, projectionMatrix, viewMatrix);
-    // c.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
-    // c1.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
-    // c2.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
-
-
+    if(c.load == true) {
+      // console.log('no');
+      c.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
+    }
+    if(c1.load == true) {
+      c1.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
+    }
+    // if (c2.load == true) {
+    //   c2.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
+    // }
 }
 function detect_collision_x() {
   if (Math.abs(c.pos[0] - c1.pos[0]) <= 0.5) {
     if (Math.abs(c.pos[2] - c1.pos[2]) <= 3.0) {
       if (c.pos[1] == c1.pos[1]) { // height same that means it has collided in x direction (whenever hit reduce the player's speed for the next 5 seconds)
-          console.log('LOL');
+          // console.log('LOL');
           c.pos[0] -= 3;
       }
       else {
-        if (Math.abs(c.pos[1] - c1.pos[1]) <= 2) { // y collision that means it stays on top
-            console.log('LOL');
-            c.pos[1] = c1.pos[1] + 2;
+        if (Math.abs(c.pos[1] - c1.pos[1]) <= 2.5) { // y collision that means it stays on top
+            // console.log('LOL');
+            c.pos[1] = c1.pos[1] + 2.5;
         }
       }
     }
