@@ -19,8 +19,11 @@ void main(void) {
 const fsSource = `
 varying lowp vec2 vColor;
 uniform sampler2D uColorNum;
+uniform lowp float flash;
 
 void main(void) {
   gl_FragColor = texture2D(uColorNum, vColor);
+  gl_FragColor[3] = flash;
 }
+
 `;

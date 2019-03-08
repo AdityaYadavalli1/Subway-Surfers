@@ -30,7 +30,7 @@ let cube = class {
         });
 
     }
-    drawCube(gl, projectionMatrix, programInfo, deltaTime) {
+    drawCube(gl, projectionMatrix, programInfo, deltaTime, flash = 1.0) {
         const modelViewMatrix = mat4.create();
         mat4.translate(
             modelViewMatrix,
@@ -102,13 +102,14 @@ let cube = class {
             programInfo.uniformLocations.modelViewMatrix,
             false,
             modelViewMatrix);
-          gl.bindTexture(gl.TEXTURE_2D, this.material.texture);
-          {
-            const vertexCount = this.vertexCountt;
-            const type = gl.UNSIGNED_SHORT;
-            const offset = 0;
-            gl.drawArrays(gl.TRIANGLES, 0, this.vertexCountt);
-        }
+        gl.uniform1f(programInfo.uniformLocations.flash, flash);
+        gl.bindTexture(gl.TEXTURE_2D, this.material.texture);
+        {
+          const vertexCount = this.vertexCountt;
+          const type = gl.UNSIGNED_SHORT;
+          const offset = 0;
+          gl.drawArrays(gl.TRIANGLES, 0, this.vertexCountt);
+      }
 
     }
 };

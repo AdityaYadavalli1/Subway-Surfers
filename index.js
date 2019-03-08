@@ -9,6 +9,10 @@ var c;
 var c1;
 var c2;
 var isJump = 0;
+var flash = 1.0
+var invertflash = 0;
+var timeup = 1;
+var countTime = 0;
 var up = [0.0, 1.0, 0.0];
 var target = [0.0, 0.0, 0.0];
 var eye = [0.0, 3.0 , 13.0];
@@ -47,6 +51,8 @@ function main() {
     uniformLocations: {
       projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
       modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
+      flash: gl.getUniformLocation(shaderProgram, 'flash'),
+
     },
   };
 
@@ -62,6 +68,13 @@ function main() {
     now *= 0.001;  // convert to seconds
     const deltaTime = now - then;
     then = now;
+    if(timeup == 0) {
+      timeup = 0.5;
+      countTime = now;
+    } // time up restored
+    if (now - countTime >= 1.0) {
+      timeup = 1;
+    }
     // c.rotation += 0.02;
     tickelements()
     detect_collision_x()
@@ -88,6 +101,17 @@ function tickelements() {
        gravity = 0;
      }
    }
+   if (invertflash == 1) { // if c is pressed; check if the period is up; if up change the flash value
+     if(timeup == 1) {
+       if (flash == 0.7) {
+         flash = 1.0;
+       }
+       else {
+         flash = 0.7;
+       }
+       timeup = 0; // time up is restored
+     }
+   }
  }
 
 // take input here
@@ -108,6 +132,14 @@ document.addEventListener('keydown', function(event) {
     }
     else if(event.keyCode == 40) {
         c.pos[1] -= yvelocity;
+    }
+    else if (event.keyCode == 67) { // press c to see flashes
+      if (invertflash == 0) {
+          invertflash = 1;
+      }
+      else {
+        invertflash = 0;
+      }
     }
 });
 
@@ -156,10 +188,10 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
     mat4.multiply(viewProjectionMatrix, projectionMatrix, viewMatrix);
     if(c.load == true) {
       // console.log('no');
-      c.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
+      c.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash);
     }
     if(c1.load == true) {
-      c1.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
+      c1.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash);
     }
     // if (c2.load == true) {
     //   c2.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
@@ -169,12 +201,10 @@ function detect_collision_x() {
   if (Math.abs(c.pos[0] - c1.pos[0]) <= 0.5) {
     if (Math.abs(c.pos[2] - c1.pos[2]) <= 3.0) {
       if (c.pos[1] == c1.pos[1]) { // height same that means it has collided in x direction (whenever hit reduce the player's speed for the next 5 seconds)
-          // console.log('LOL');
           c.pos[0] -= 3;
       }
       else {
         if (Math.abs(c.pos[1] - c1.pos[1]) <= 2.5) { // y collision that means it stays on top
-            // console.log('LOL');
             c.pos[1] = c1.pos[1] + 2.5;
         }
       }
