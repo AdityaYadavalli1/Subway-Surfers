@@ -16,21 +16,26 @@ var flash = 1.0;
 var invertflash = 0;
 var invertgreyCode = 0;
 var greyCode = 0;
-var timeup = 1;
+var timeup = 1, timeupPol = 0;
 var countTime = 0;
+var countTimePol = 0;
 var up = [0.0, 1.0, 0.0];
 var target = [0.0, 0.0, 0.0];
-var eye = [0.0, 3.0 , 13.0];
+var eye = [0.0, 8.0 , 13.0];
 function main() {
   const canvas = document.querySelector('#glcanvas');
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
  // make objects here
   // If we don't have a GL context, give up now
   c = new cube(gl, [0.0, 0.0, 0.0],[0.2, 0.2, 0.2]);
-  cu = new cubie(gl, [0.0, 0.0, 0.0],[1.0, 1.0, 1.0]);
   c.start(gl);
+  c28 = new police(gl, [0.0, 0.0, 8.0],[0.2, 0.2, 0.2]);
+  c28.start(gl);
+  // cu = new cubie(gl, [0.0, 0.0, 0.0],[1.0, 1.0, 1.0]);
   c1 = new train(gl, [2.0, 0.0, -13.0], [0.1, 0.1, 0.1]);
   c1.start(gl);
+  c27 = new train(gl, [-2.0, 0.0, -19.0], [0.1, 0.1, 0.1]);
+  c27.start(gl);
   c2 = new cube(gl, [2.0, 0.0, -16.0], [1.0, 1.0, 3.0]);
   c2.start(gl);
   c3 = new railroad(gl, [2.0, -3.0, -16.0], [0.03, 0.05, 0.05]) // right most
@@ -51,7 +56,7 @@ function main() {
   c10.start(gl);
   c11 = new railroad(gl, [0.0, -3.0, 8.0], [0.03, 0.05, 0.05])
   c11.start(gl);
-  c12 = new railroad(gl, [0.0, -3.0, 5.0], [0.03, 0.05, 0.05])
+  c12 = new railroad(gl, [0.0, -3.0, 5.0], [0.03, 0.05, 0.05])// middle
   c12.start(gl);
   c13 = new railroad(gl, [0.0, -3.0, 2.0], [0.03, 0.05, 0.05])
   c13.start(gl);
@@ -65,7 +70,7 @@ function main() {
   c17.start(gl);
   c18 = new railroad(gl, [0.0, -3.0, -16.0], [0.03, 0.05, 0.05])
   c18.start(gl);
-  c19 = new railroad(gl, [-2.0, -3.0, 8.0], [0.03, 0.05, 0.05])
+  c19 = new railroad(gl, [-2.0, -3.0, 8.0], [0.03, 0.05, 0.05])// left most
   c19.start(gl);
   c20 = new railroad(gl, [-2.0, -3.0, 5.0], [0.03, 0.05, 0.05])
   c20.start(gl);
@@ -128,6 +133,12 @@ function main() {
     if (now - countTime >= 1.0) {
       timeup = 1;
     }
+    if (countTimePol == 0) {
+      countTimePol = now;
+    }
+    if (now - countTimePol >= 1.0) {
+      timeupPol = 1;
+    }
     // c.rotation += 0.02;
     tickelements()
     detect_collision_x()
@@ -143,6 +154,7 @@ var gravity = 0;
 function tickelements() {
 
    c.pos[2] -= 0.04;
+   c28.pos[2] -= 0.04;
    c3.pos[2] -= 0.04;
    c4.pos[2] -= 0.04;
    c5.pos[2] -= 0.04;
@@ -193,7 +205,7 @@ function tickelements() {
 
 // take input here
 var xvelocity = 2;
-var yvelocity = 4;
+var yvelocity = 3.5;
 document.addEventListener('keydown', function(event) {
     if(event.keyCode == 37) {
         c.pos[0] -= xvelocity;
@@ -348,18 +360,37 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
     if(c26.load == true) {
       c26.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
     }
-
+    if(c27.load == true) {
+      c27.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(timeupPol == 0) {
+      if(c28.load == true) {
+        c28.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+      }
+    }
 
 }
 function detect_collision_x() {
   if (Math.abs(c.pos[0] - c1.pos[0]) <= 0.5) {
     if (Math.abs(c.pos[2] - c1.pos[2]) <= 3.0) {
       if (c.pos[1] == c1.pos[1]) { // height same that means it has collided in x direction (whenever hit reduce the player's speed for the next 5 seconds)
-          c.pos[0] -= 3;
+          c.pos[0] -= 2;
       }
       else {
         if (Math.abs(c.pos[1] - c1.pos[1]) <= 2.5) { // y collision that means it stays on top
             c.pos[1] = c1.pos[1] + 2.5;
+        }
+      }
+    }
+  }
+  if (Math.abs(c.pos[0] - c27.pos[0]) <= 0.5) {
+    if (Math.abs(c.pos[2] - c27.pos[2]) <= 3.0) {
+      if (c.pos[1] == c27.pos[1]) { // height same that means it has collided in x direction (whenever hit reduce the player's speed for the next 5 seconds)
+          c.pos[0] += 2;
+      }
+      else {
+        if (Math.abs(c.pos[1] - c27.pos[1]) <= 2.5) { // y collision that means it stays on top
+            c.pos[1] = c27.pos[1] + 2.5;
         }
       }
     }
