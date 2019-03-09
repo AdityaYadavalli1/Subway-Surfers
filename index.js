@@ -1,7 +1,4 @@
 var cubeRotation = 0.0;
-
-main();
-
 //
 // Start here
 //
@@ -17,12 +14,17 @@ var flash = 1.0;
 var invertflash = 0;
 var invertgreyCode = 0;
 var greyCode = 0;
+var coins = [];
+var coinsCollide = [];
 var quiteGame = 0;
 var timeup = 1, timeupPol = 0, timeupJet = 0;
 var countTime = 0, countTimeJet = 0, countTimePol = 0;
 var up = [0.0, 1.0, 0.0];
 var target = [0.0, 0.0, 0.0];
 var eye = [0.0, 8.0 , 13.0];
+
+main();
+
 function main() {
   const canvas = document.querySelector('#glcanvas');
   const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
@@ -34,6 +36,12 @@ function main() {
   c28.start(gl);
   c29 = new jetpack(gl, [0.0, 0.0, -15.0],[10.0, 10.0, 10.0]);
   c29.start(gl);
+  c30 = new coin(gl, [0.0, 0.0, -13.0],[5.0, 5.0, 5.0]);
+  c30.start(gl);
+  coins.push(c30);
+  coinsCollide.push(0)
+  // c30 = new shoes(gl, [0.0, 0.0, -13.0],[5.0, 5.0, 5.0]);
+  // c30.start(gl);
   // cu = new cubie(gl, [0.0, 0.0, 0.0],[1.0, 1.0, 1.0]);
   c1 = new train(gl, [2.0, 0.0, -13.0], [0.1, 0.1, 0.1]);
   c1.start(gl);
@@ -398,6 +406,14 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
         c28.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
       }
     }
+    // if(c30.load == true) {
+    //   c30.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    // }
+    for (let i = 0; i < coins.length; i++) {
+      if (coinsCollide[i] == 0) {
+        coins[i].drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+      }
+    }
 
 }
 function detect_collision_x() {
@@ -443,11 +459,20 @@ function detect_collision_x() {
       }
     }
   }
-  if (Math.abs(c.pos[0] - c29.pos[0]) <= 0.5) {
+  if (Math.abs(c.pos[0] - c29.pos[0]) <= 0.5) { // jetpack
     if (Math.abs(c.pos[2] - c29.pos[2]) <= 0.5) {
       if (c.pos[1] == c29.pos[1]) { // same height
         isJetpack = 1;
         timeupJet = 0;
+      }
+    }
+  }
+  for (let i = 0; i<coins.length; i++ ) {
+    if (Math.abs(c.pos[0] - coins[i].pos[0]) <= 0.5) { // jetpack
+      if (Math.abs(c.pos[2] - coins[i].pos[2]) <= 0.5) {
+        if (c.pos[1] == coins[i].pos[1]) { // same height
+          coinsCollide[i] = 1;
+        }
       }
     }
   }
