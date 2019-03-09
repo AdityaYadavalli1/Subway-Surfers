@@ -6,7 +6,7 @@ var c;
 var c1;
 var c2;
 var c3;
-var c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20, c21, c22, c23, c24, c25, c26, c27, c28;
+var c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30;
 var cu;
 var isJetpack = 0;
 var isJump = 0;
@@ -40,6 +40,26 @@ function main() {
   c30.start(gl);
   coins.push(c30);
   coinsCollide.push(0)
+  c34 = new wall(gl, [-4.5, 0.0, -6.0],[1.0, 1.0, 1.0]);
+  c34.start(gl);
+  c31 = new wall(gl, [-4.5, 0.0, -13.0],[1.0, 1.0, 1.0]);
+  c31.start(gl);
+  c32 = new wall(gl, [-4.5, 0.0, -20.0],[1.0, 1.0, 1.0]);
+  c32.start(gl);
+  c33 = new wall(gl, [-4.5, 0.0, -27.0],[1.0, 1.0, 1.0]);
+  c33.start(gl);
+  c35 = new wall(gl, [-4.5, 0.0, 0.0],[1.0, 1.0, 1.0]);
+  c35.start(gl);
+  c36 = new wall(gl, [4.5, 0.0, -6.0],[1.0, 1.0, 1.0]);
+  c36.start(gl);
+  c37 = new wall(gl, [4.5, 0.0, -13.0],[1.0, 1.0, 1.0]);
+  c37.start(gl);
+  c38 = new wall(gl, [4.5, 0.0, -20.0],[1.0, 1.0, 1.0]);
+  c38.start(gl);
+  c39 = new wall(gl, [4.5, 0.0, -27.0],[1.0, 1.0, 1.0]);
+  c39.start(gl);
+  c40 = new wall(gl, [4.5, 0.0, 0.0],[1.0, 1.0, 1.0]);
+  c40.start(gl);
   // c30 = new shoes(gl, [0.0, 0.0, -13.0],[5.0, 5.0, 5.0]);
   // c30.start(gl);
   // cu = new cubie(gl, [0.0, 0.0, 0.0],[1.0, 1.0, 1.0]);
@@ -200,6 +220,19 @@ function tickelements() {
     c24.pos[2] -= 0.04;
     c25.pos[2] -= 0.04;
     c26.pos[2] -= 0.04;
+
+    c31.pos[2] -= 0.04;
+    c32.pos[2] -= 0.04;
+    c33.pos[2] -= 0.04;
+    c34.pos[2] -= 0.04;
+    c35.pos[2] -= 0.04;
+    c36.pos[2] -= 0.04;
+    c37.pos[2] -= 0.04;
+    c38.pos[2] -= 0.04;
+    c39.pos[2] -= 0.04;
+    c40.pos[2] -= 0.04;
+
+
   }
   if (timeupJet == 1) {// time up jet is called repeatedly
     c.pos[1] = 0;
@@ -207,7 +240,7 @@ function tickelements() {
     target[1] = 0.0;
     isJetpack = 0;
     timeupJet = 0.5;
-    console.log('LOL');
+    // console.log('LOL');
   }
   if (isJetpack == 1 || isJetpack == 0.5) { // count started
      c.pos[1] = 10;
@@ -406,9 +439,36 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
         c28.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
       }
     }
-    // if(c30.load == true) {
-    //   c30.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
-    // }
+    if(c31.load == true) {
+      c31.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c32.load == true) {
+      c32.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c33.load == true) {
+      c33.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c34.load == true) {
+      c34.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c35.load == true) {
+      c35.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c36.load == true) {
+      c36.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c37.load == true) {
+      c37.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c38.load == true) {
+      c38.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c39.load == true) {
+      c39.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c40.load == true) {
+      c40.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
     for (let i = 0; i < coins.length; i++) {
       if (coinsCollide[i] == 0) {
         coins[i].drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
@@ -468,7 +528,7 @@ function detect_collision_x() {
     }
   }
   for (let i = 0; i<coins.length; i++ ) {
-    if (Math.abs(c.pos[0] - coins[i].pos[0]) <= 0.5) { // jetpack
+    if (Math.abs(c.pos[0] - coins[i].pos[0]) <= 0.5) { // coin
       if (Math.abs(c.pos[2] - coins[i].pos[2]) <= 0.5) {
         if (c.pos[1] == coins[i].pos[1]) { // same height
           coinsCollide[i] = 1;
@@ -476,4 +536,32 @@ function detect_collision_x() {
       }
     }
   }
+  if (Math.abs(c.pos[0] - c35.pos[0]) <= 0.5) { // left wall
+    if (Math.abs(c.pos[2] - c35.pos[2]) <= 0.5) {
+        c.pos[0] += 2;
+        if (timeupPol == 1) {
+          countTimePol = 0;
+          timeupPol = 0;
+        }
+        else {
+          c28.pos[0] = c.pos[0];
+          c28.pos[2] = c.pos[2];
+          quiteGame = 1;
+        }
+      }
+    }
+  if (Math.abs(c.pos[0] - c40.pos[0]) <= 0.5) { // right wall
+    if (Math.abs(c.pos[2] - c40.pos[2]) <= 0.5) {
+        c.pos[0] -= 2;
+        if (timeupPol == 1) {
+          countTimePol = 0;
+          timeupPol = 0;
+        }
+        else {
+          c28.pos[0] = c.pos[0];
+          c28.pos[2] = c.pos[2];
+          quiteGame = 1;
+        }
+      }
+    }
 }
