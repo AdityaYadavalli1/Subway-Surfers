@@ -1,4 +1,4 @@
-let cube = class {
+let railroad = class {
     constructor(gl, pos, scale) {
         this.positions = [];
         this.indices  = [];
@@ -8,13 +8,13 @@ let cube = class {
         this.bufferr = {};
         this.object = {position: this.position, indices: this.indices, faceColors: this.faceColors};
         this.vertextCountt = 0;
-        this.rotation = 180 * Math.PI/180;
+        this.rotation = 90 * Math.PI/180;
         this.load = false;
         this.pos = pos;
         this.scale = scale;
     }
     start(gl) {
-      fetch("./models/objects/Jake/Jake/Jake.obj")
+      fetch("./models/objects/Poke/Benches.obj")
       .then(response => response.text())
       .then(text => loadObject(text))
       .then(buffer => {
@@ -24,7 +24,7 @@ let cube = class {
             uvs: this.obj.color,
             normals: this.obj.indices
           };
-          loadTexture(gl, "./models/objects/Jake/Jake/avatar_slick.png", this.material);
+          loadTexture(gl, "./models/objects/Poke/ko_opass.png", this.material);
           this.vertexCountt = buffer.vertices.length / 3;
           this.load = true;
         });

@@ -83,6 +83,12 @@ async function loadObject(filedata) {
   var normals = [];
   var normal_buffer_data = [];
   var textures = [];
+  var vertex_buffer_data_temp1 = [];
+  var vertex_buffer_data_temp3 = [];
+  var texture_buffer_data_temp1 = [];
+  var texture_buffer_data_temp3 = [];
+  var normal_buffer_data_temp1 = [];
+  var normal_buffer_data_temp3 = [];
   var texture_buffer_data = [];
   var lines = filedata.split('\n');
   lines = lines.map(s => s.trim());
@@ -110,21 +116,60 @@ async function loadObject(filedata) {
 
     }
     else if (words[0] == 'f') {
-      for (let wc = 1; wc < words.length; wc++) {
-        let vxdata = words[wc].split('/')
-        let p = parseInt(vxdata[0]) - 1
-        let t = parseInt(vxdata[1]) - 1
-        let n = parseInt(vxdata[2]) - 1
-        vertex_buffer_data.push(points[p][0])
-        vertex_buffer_data.push(points[p][1])
-        vertex_buffer_data.push(points[p][2])
+      if(words.length == 5) {
+        for (let wc = 1; wc < 4; wc++) { //1, 2, 3
+          let vxdata = words[wc].split('/')
+          let p = parseInt(vxdata[0]) - 1
+          let t = parseInt(vxdata[1]) - 1
+          let n = parseInt(vxdata[2]) - 1
+          vertex_buffer_data.push(points[p][0])
+          vertex_buffer_data.push(points[p][1])
+          vertex_buffer_data.push(points[p][2])
 
-        texture_buffer_data.push(textures[t][0])
-        texture_buffer_data.push(textures[t][1])
+          texture_buffer_data.push(textures[t][0])
+          texture_buffer_data.push(textures[t][1])
 
-        normal_buffer_data.push(normals[n][0])
-        normal_buffer_data.push(normals[n][1])
-        normal_buffer_data.push(normals[n][2])
+          normal_buffer_data.push(normals[n][0])
+          normal_buffer_data.push(normals[n][1])
+          normal_buffer_data.push(normals[n][2])
+        }
+        for (let wc = 1; wc < 5; wc++) { //1, 3, 4
+          if (wc == 2) {
+            continue;
+          }
+          let vxdata = words[wc].split('/')
+          let p = parseInt(vxdata[0]) - 1
+          let t = parseInt(vxdata[1]) - 1
+          let n = parseInt(vxdata[2]) - 1
+          vertex_buffer_data.push(points[p][0])
+          vertex_buffer_data.push(points[p][1])
+          vertex_buffer_data.push(points[p][2])
+
+          texture_buffer_data.push(textures[t][0])
+          texture_buffer_data.push(textures[t][1])
+
+          normal_buffer_data.push(normals[n][0])
+          normal_buffer_data.push(normals[n][1])
+          normal_buffer_data.push(normals[n][2])
+        }
+      }
+      else if (words.length == 4) {
+        for (let wc = 1; wc < words.length; wc++) {
+          let vxdata = words[wc].split('/')
+          let p = parseInt(vxdata[0]) - 1
+          let t = parseInt(vxdata[1]) - 1
+          let n = parseInt(vxdata[2]) - 1
+          vertex_buffer_data.push(points[p][0])
+          vertex_buffer_data.push(points[p][1])
+          vertex_buffer_data.push(points[p][2])
+
+          texture_buffer_data.push(textures[t][0])
+          texture_buffer_data.push(textures[t][1])
+
+          normal_buffer_data.push(normals[n][0])
+          normal_buffer_data.push(normals[n][1])
+          normal_buffer_data.push(normals[n][2])
+        }
       }
     }
   }

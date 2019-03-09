@@ -17,13 +17,24 @@ void main(void) {
 // Fragment shader program
 
 const fsSource = `
-varying lowp vec2 vColor;
+precision mediump float;
+varying vec2 vColor;
 uniform sampler2D uColorNum;
-uniform lowp float flash;
+uniform float flash;
+uniform float greyCode;
 
 void main(void) {
-  gl_FragColor = texture2D(uColorNum, vColor);
-  gl_FragColor[3] = flash;
+  if (greyCode == 1.0) {
+    vec4 greyColor = texture2D(uColorNum, vColor);
+    float grey = dot(greyColor.rgb, vec3(0.3, 0.6, 0.1));
+    // gl_FragColor = texture2D(uColorNum, vColor); // 0.3, 0.6, 0.1 1 2 3, 1 3 4
+    // gl_FragColor[3] = flash;
+    gl_FragColor = vec4(vec3(grey), flash);
+  }
+  else {
+    gl_FragColor = texture2D(uColorNum, vColor);
+    gl_FragColor[3] = flash;
+  }
 }
 
 `;

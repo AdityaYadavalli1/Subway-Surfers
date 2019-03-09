@@ -32,7 +32,7 @@ let train = class {
         });
 
     }
-    drawCube(gl, projectionMatrix, programInfo, deltaTime, flash = 1.0) {
+    drawCube(gl, projectionMatrix, programInfo, deltaTime, flash = 1.0, grayCode = 0) {
         const modelViewMatrix = mat4.create();
         mat4.translate(
             modelViewMatrix,
@@ -105,6 +105,7 @@ let train = class {
             false,
             modelViewMatrix);
           gl.uniform1f(programInfo.uniformLocations.flash, flash);
+          gl.uniform1f(programInfo.uniformLocations.greyCode, greyCode);
           gl.bindTexture(gl.TEXTURE_2D, this.material.texture);
           {
             const vertexCount = this.vertexCountt;

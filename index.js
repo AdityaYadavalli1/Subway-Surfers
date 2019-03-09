@@ -8,9 +8,14 @@ main();
 var c;
 var c1;
 var c2;
+var c3;
+var c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20, c21, c22, c23, c24, c25, c26;
+var cu;
 var isJump = 0;
-var flash = 1.0
+var flash = 1.0;
 var invertflash = 0;
+var invertgreyCode = 0;
+var greyCode = 0;
 var timeup = 1;
 var countTime = 0;
 var up = [0.0, 1.0, 0.0];
@@ -22,12 +27,60 @@ function main() {
  // make objects here
   // If we don't have a GL context, give up now
   c = new cube(gl, [0.0, 0.0, 0.0],[0.2, 0.2, 0.2]);
+  cu = new cubie(gl, [0.0, 0.0, 0.0],[1.0, 1.0, 1.0]);
   c.start(gl);
   c1 = new train(gl, [2.0, 0.0, -13.0], [0.1, 0.1, 0.1]);
   c1.start(gl);
   c2 = new cube(gl, [2.0, 0.0, -16.0], [1.0, 1.0, 3.0]);
   c2.start(gl);
-
+  c3 = new railroad(gl, [2.0, -3.0, -16.0], [0.03, 0.05, 0.05]) // right most
+  c3.start(gl);
+  c4 = new railroad(gl, [2.0, -3.0, -10.0], [0.03, 0.05, 0.05])
+  c4.start(gl);
+  c5 = new railroad(gl, [2.0, -3.0, -7.0], [0.03, 0.05, 0.05])
+  c5.start(gl);
+  c6 = new railroad(gl, [2.0, -3.0, -4.0], [0.03, 0.05, 0.05])
+  c6.start(gl);
+  c7 = new railroad(gl, [2.0, -3.0, -1.0], [0.03, 0.05, 0.05])
+  c7.start(gl);
+  c8 = new railroad(gl, [2.0, -3.0, 2.0], [0.03, 0.05, 0.05])
+  c8.start(gl);
+  c9 = new railroad(gl, [2.0, -3.0, 5.0], [0.03, 0.05, 0.05])
+  c9.start(gl);
+  c10 = new railroad(gl, [2.0, -3.0, 8.0], [0.03, 0.05, 0.05])
+  c10.start(gl);
+  c11 = new railroad(gl, [0.0, -3.0, 8.0], [0.03, 0.05, 0.05])
+  c11.start(gl);
+  c12 = new railroad(gl, [0.0, -3.0, 5.0], [0.03, 0.05, 0.05])
+  c12.start(gl);
+  c13 = new railroad(gl, [0.0, -3.0, 2.0], [0.03, 0.05, 0.05])
+  c13.start(gl);
+  c14 = new railroad(gl, [0.0, -3.0, -1.0], [0.03, 0.05, 0.05])
+  c14.start(gl);
+  c15 = new railroad(gl, [0.0, -3.0, -4.0], [0.03, 0.05, 0.05])
+  c15.start(gl);
+  c16 = new railroad(gl, [0.0, -3.0, -7.0], [0.03, 0.05, 0.05])
+  c16.start(gl);
+  c17 = new railroad(gl, [0.0, -3.0, -10.0], [0.03, 0.05, 0.05])
+  c17.start(gl);
+  c18 = new railroad(gl, [0.0, -3.0, -16.0], [0.03, 0.05, 0.05])
+  c18.start(gl);
+  c19 = new railroad(gl, [-2.0, -3.0, 8.0], [0.03, 0.05, 0.05])
+  c19.start(gl);
+  c20 = new railroad(gl, [-2.0, -3.0, 5.0], [0.03, 0.05, 0.05])
+  c20.start(gl);
+  c21 = new railroad(gl, [-2.0, -3.0, 2.0], [0.03, 0.05, 0.05])
+  c21.start(gl);
+  c22 = new railroad(gl, [-2.0, -3.0, -1.0], [0.03, 0.05, 0.05])
+  c22.start(gl);
+  c23 = new railroad(gl, [-2.0, -3.0, -4.0], [0.03, 0.05, 0.05])
+  c23.start(gl);
+  c24 = new railroad(gl, [-2.0, -3.0, -7.0], [0.03, 0.05, 0.05])
+  c24.start(gl);
+  c25 = new railroad(gl, [-2.0, -3.0, -10.0], [0.03, 0.05, 0.05])
+  c25.start(gl);
+  c26 = new railroad(gl, [-2.0, -3.0, -16.0], [0.03, 0.05, 0.05])
+  c26.start(gl);
   if (!gl) {
     alert('Unable to initialize WebGL. Your browser or machine may not support it.');
     return;
@@ -52,7 +105,7 @@ function main() {
       projectionMatrix: gl.getUniformLocation(shaderProgram, 'uProjectionMatrix'),
       modelViewMatrix: gl.getUniformLocation(shaderProgram, 'uModelViewMatrix'),
       flash: gl.getUniformLocation(shaderProgram, 'flash'),
-
+      greyCode: gl.getUniformLocation(shaderProgram, 'greyCode'),
     },
   };
 
@@ -90,6 +143,30 @@ var gravity = 0;
 function tickelements() {
 
    c.pos[2] -= 0.04;
+   c3.pos[2] -= 0.04;
+   c4.pos[2] -= 0.04;
+   c5.pos[2] -= 0.04;
+   c6.pos[2] -= 0.04;
+   c7.pos[2] -= 0.04;
+   c8.pos[2] -= 0.04;
+   c9.pos[2] -= 0.04;
+   c10.pos[2] -= 0.04;
+   c11.pos[2] -= 0.04;
+   c12.pos[2] -= 0.04;
+   c13.pos[2] -= 0.04;
+   c14.pos[2] -= 0.04;
+   c15.pos[2] -= 0.04;
+   c16.pos[2] -= 0.04;
+   c17.pos[2] -= 0.04;
+   c18.pos[2] -= 0.04;
+   c19.pos[2] -= 0.04;
+   c20.pos[2] -= 0.04;
+   c21.pos[2] -= 0.04;
+   c22.pos[2] -= 0.04;
+   c23.pos[2] -= 0.04;
+   c24.pos[2] -= 0.04;
+   c25.pos[2] -= 0.04;
+   c26.pos[2] -= 0.04;
    if (isJump == 1) {
      if(c.pos[1] > 0) {
        gravity -= 0.001;
@@ -141,6 +218,14 @@ document.addEventListener('keydown', function(event) {
         invertflash = 0;
       }
     }
+    else if (event.keyCode == 88) { // press x to see greyScale
+      if (greyCode == 0) {
+          greyCode = 1.0
+      }
+      else {
+        greyCode = 0;
+      }
+    }
 });
 
 function drawScene(gl, programInfo, buffers, deltaTime) {
@@ -181,21 +266,90 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
 
     var viewMatrix = cameraMatrix;
 
-    //mat4.invert(viewMatrix, cameraMatrix);
-
     var viewProjectionMatrix = mat4.create();
 
     mat4.multiply(viewProjectionMatrix, projectionMatrix, viewMatrix);
     if(c.load == true) {
       // console.log('no');
-      c.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash);
+      c.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
     }
     if(c1.load == true) {
-      c1.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash);
+      c1.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
     }
-    // if (c2.load == true) {
-    //   c2.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime);
-    // }
+    if(c3.load == true) {
+      c3.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c4.load == true) {
+      c4.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c5.load == true) {
+      c5.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c6.load == true) {
+      c6.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c7.load == true) {
+      c7.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c8.load == true) {
+      c8.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c9.load == true) {
+      c9.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c10.load == true) {
+      c10.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c11.load == true) {
+      c11.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c12.load == true) {
+      c12.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c13.load == true) {
+      c13.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c14.load == true) {
+      c14.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c15.load == true) {
+      c15.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c16.load == true) {
+      c16.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c17.load == true) {
+      c17.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c18.load == true) {
+      c18.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c19.load == true) {
+      c19.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c20.load == true) {
+      c20.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c21.load == true) {
+      c21.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c22.load == true) {
+      c22.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c23.load == true) {
+      c23.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c24.load == true) {
+      c24.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c25.load == true) {
+      c25.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c26.load == true) {
+      c26.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+
+
 }
 function detect_collision_x() {
   if (Math.abs(c.pos[0] - c1.pos[0]) <= 0.5) {
@@ -211,14 +365,3 @@ function detect_collision_x() {
     }
   }
 }
-// function detect_collision_y() {
-//   if (Math.abs(c.pos[1] - c1.pos[1]) < 0.5) {
-//     if (Math.abs(c.pos[2] - c1.pos[2]) < 0.5) {
-//       c.pos[1] -= 1;
-//     }
-//   }
-// }
-// one more if condition for these collisions and we are done bois
-//
-// Initialize a shader program, so WebGL knows how to draw our data
-//
