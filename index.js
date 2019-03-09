@@ -8,7 +8,7 @@ var c2;
 var c3;
 var c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30;
 var cu;
-var isJetpack = 0;
+var isJetpack = 0, isShoe = 0;
 var isJump = 0;
 var flash = 1.0;
 var invertflash = 0;
@@ -17,8 +17,8 @@ var greyCode = 0;
 var coins = [];
 var coinsCollide = [];
 var quiteGame = 0;
-var timeup = 1, timeupPol = 0, timeupJet = 0;
-var countTime = 0, countTimeJet = 0, countTimePol = 0;
+var timeup = 1, timeupPol = 0, timeupJet = 0, timeupShoe = 0;
+var countTime = 0, countTimeJet = 0, countTimePol = 0, countTimeShoe = 0;
 var up = [0.0, 1.0, 0.0];
 var target = [0.0, 0.0, 0.0];
 var eye = [0.0, 8.0 , 13.0];
@@ -117,6 +117,8 @@ function main() {
   c25.start(gl);
   c26 = new railroad(gl, [-2.0, -3.0, -16.0], [0.03, 0.05, 0.05])
   c26.start(gl);
+  c41 = new shoes(gl, [-2.0, 0.0, -13.0],[5.0, 5.0, 5.0])
+  c41.start(gl);
   if (!gl) {
     alert('Unable to initialize WebGL. Your browser or machine may not support it.');
     return;
@@ -177,6 +179,16 @@ function main() {
     if(timeupJet == 0) {
       if (now - countTimeJet >= 10.0) {
         timeupJet = 1;
+      }
+    }
+    if (isShoe == 1) {
+      countTimeShoe = now;
+      isShoe = 0.5;
+    }
+    if(timeupShoe == 0) {
+      if (now - countTimeShoe >= 10.0) {
+        timeupShoe = 1;
+        isShoe = 0;
       }
     }
     // c.rotation += 0.02;
@@ -242,6 +254,9 @@ function tickelements() {
     timeupJet = 0.5;
     // console.log('LOL');
   }
+  // if (timeupShoe == 1) {
+  //   isShoe = 0;
+  // }
   if (isJetpack == 1 || isJetpack == 0.5) { // count started
      c.pos[1] = 10;
      eye[1] = 18.0;
@@ -283,7 +298,12 @@ document.addEventListener('keydown', function(event) {
     }
     else if(event.keyCode == 38) { //up
       if (isJump == 0 && isJetpack == 0) {
-        c.pos[1] += yvelocity;
+        if (isShoe == 0) {
+          c.pos[1] += yvelocity;
+        }
+        else if (isShoe == 1 || isShoe == 0.5) {
+          c.pos[1] += 4.5;
+        }
         isJump = 1;
       }
     }
@@ -469,6 +489,11 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
     if(c40.load == true) {
       c40.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
     }
+    if(isShoe == 0) {
+      if(c41.load == true) {
+        c41.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+      }
+    }
     for (let i = 0; i < coins.length; i++) {
       if (coinsCollide[i] == 0) {
         coins[i].drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
@@ -561,6 +586,14 @@ function detect_collision_x() {
           c28.pos[0] = c.pos[0];
           c28.pos[2] = c.pos[2];
           quiteGame = 1;
+        }
+      }
+    }
+    if (Math.abs(c.pos[0] - c41.pos[0]) <= 0.6) { // shoe
+      if (Math.abs(c.pos[2] - c41.pos[2]) <= 0.6) {
+        if (c.pos[1] == c41.pos[1]) { // same height
+          isShoe = 1;
+          timeupShoe = 0;
         }
       }
     }
