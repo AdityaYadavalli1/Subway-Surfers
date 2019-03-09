@@ -22,7 +22,6 @@ var countTime = 0, countTimeJet = 0, countTimePol = 0, countTimeShoe = 0;
 var up = [0.0, 1.0, 0.0];
 var target = [0.0, 0.0, 0.0];
 var eye = [0.0, 8.0 , 13.0];
-
 main();
 
 function main() {
@@ -119,6 +118,10 @@ function main() {
   c26.start(gl);
   c41 = new shoes(gl, [-2.0, 0.0, -13.0],[5.0, 5.0, 5.0])
   c41.start(gl);
+  c42 = new banana(gl, [-2.0, 0.0, -9.0],[0.3, 0.3, 0.3])
+  c42.start(gl);
+  c43 = new trash(gl, [2.0, 0.0, -9.0],[0.1, 0.1, 0.1])
+  c43.start(gl);
   if (!gl) {
     alert('Unable to initialize WebGL. Your browser or machine may not support it.');
     return;
@@ -308,7 +311,15 @@ document.addEventListener('keydown', function(event) {
       }
     }
     else if(event.keyCode == 40) {
-        c.pos[1] -= yvelocity;
+        // c.pos[1] -= yvelocity;
+        // console.log('LO');
+        // scaley = 0.1;
+        if (c.scale[1] == 0.1) {
+          c.scale[1] = 0.2;
+        }
+        else {
+          c.scale[1] = 0.1;
+        }
     }
     else if (event.keyCode == 67) { // press c to see flashes
       if (invertflash == 0) {
@@ -494,6 +505,12 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
         c41.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
       }
     }
+    if(c42.load == true) {
+      c42.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c43.load == true) {
+      c43.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
     for (let i = 0; i < coins.length; i++) {
       if (coinsCollide[i] == 0) {
         coins[i].drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
@@ -594,6 +611,24 @@ function detect_collision_x() {
         if (c.pos[1] == c41.pos[1]) { // same height
           isShoe = 1;
           timeupShoe = 0;
+        }
+      }
+    }
+    if (Math.abs(c.pos[0] - c42.pos[0]) <= 0.6) { // peel
+      if (Math.abs(c.pos[2] - c42.pos[2]) <= 0.6) {
+        if (c.pos[1] == c41.pos[1]) { // same height
+          c28.pos[0] = c.pos[0];
+          c28.pos[2] = c.pos[2];
+          quiteGame = 1;
+        }
+      }
+    }
+    if (Math.abs(c.pos[0] - c43.pos[0]) <= 0.6) { // peel
+      if (Math.abs(c.pos[2] - c43.pos[2]) <= 0.6) {
+        if (c.pos[1] == c41.pos[1]) { // same height
+          c28.pos[0] = c.pos[0];
+          c28.pos[2] = c.pos[2];
+          quiteGame = 1;
         }
       }
     }
