@@ -9,16 +9,17 @@ var c;
 var c1;
 var c2;
 var c3;
-var c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20, c21, c22, c23, c24, c25, c26;
+var c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20, c21, c22, c23, c24, c25, c26, c27, c28;
 var cu;
+var isJetpack = 0;
 var isJump = 0;
 var flash = 1.0;
 var invertflash = 0;
 var invertgreyCode = 0;
 var greyCode = 0;
-var timeup = 1, timeupPol = 0;
-var countTime = 0;
-var countTimePol = 0;
+var quiteGame = 0;
+var timeup = 1, timeupPol = 0, timeupJet = 0;
+var countTime = 0, countTimeJet = 0, countTimePol = 0;
 var up = [0.0, 1.0, 0.0];
 var target = [0.0, 0.0, 0.0];
 var eye = [0.0, 8.0 , 13.0];
@@ -31,6 +32,8 @@ function main() {
   c.start(gl);
   c28 = new police(gl, [0.0, 0.0, 8.0],[0.2, 0.2, 0.2]);
   c28.start(gl);
+  c29 = new jetpack(gl, [0.0, 0.0, -15.0],[10.0, 10.0, 10.0]);
+  c29.start(gl);
   // cu = new cubie(gl, [0.0, 0.0, 0.0],[1.0, 1.0, 1.0]);
   c1 = new train(gl, [2.0, 0.0, -13.0], [0.1, 0.1, 0.1]);
   c1.start(gl);
@@ -136,8 +139,17 @@ function main() {
     if (countTimePol == 0) {
       countTimePol = now;
     }
-    if (now - countTimePol >= 1.0) {
+    if (now - countTimePol >= 3.0) {
       timeupPol = 1;
+    }
+    if (isJetpack == 1) {
+      countTimeJet = now;
+      isJetpack = 0.5;
+    }
+    if(timeupJet == 0) {
+      if (now - countTimeJet >= 10.0) {
+        timeupJet = 1;
+      }
     }
     // c.rotation += 0.02;
     tickelements()
@@ -153,32 +165,47 @@ function main() {
 var gravity = 0;
 function tickelements() {
 
-   c.pos[2] -= 0.04;
-   c28.pos[2] -= 0.04;
-   c3.pos[2] -= 0.04;
-   c4.pos[2] -= 0.04;
-   c5.pos[2] -= 0.04;
-   c6.pos[2] -= 0.04;
-   c7.pos[2] -= 0.04;
-   c8.pos[2] -= 0.04;
-   c9.pos[2] -= 0.04;
-   c10.pos[2] -= 0.04;
-   c11.pos[2] -= 0.04;
-   c12.pos[2] -= 0.04;
-   c13.pos[2] -= 0.04;
-   c14.pos[2] -= 0.04;
-   c15.pos[2] -= 0.04;
-   c16.pos[2] -= 0.04;
-   c17.pos[2] -= 0.04;
-   c18.pos[2] -= 0.04;
-   c19.pos[2] -= 0.04;
-   c20.pos[2] -= 0.04;
-   c21.pos[2] -= 0.04;
-   c22.pos[2] -= 0.04;
-   c23.pos[2] -= 0.04;
-   c24.pos[2] -= 0.04;
-   c25.pos[2] -= 0.04;
-   c26.pos[2] -= 0.04;
+  if (quiteGame == 0) {
+    c.pos[2] -= 0.04;
+    c28.pos[2] -= 0.04;
+    c3.pos[2] -= 0.04;
+    c4.pos[2] -= 0.04;
+    c5.pos[2] -= 0.04;
+    c6.pos[2] -= 0.04;
+    c7.pos[2] -= 0.04;
+    c8.pos[2] -= 0.04;
+    c9.pos[2] -= 0.04;
+    c10.pos[2] -= 0.04;
+    c11.pos[2] -= 0.04;
+    c12.pos[2] -= 0.04;
+    c13.pos[2] -= 0.04;
+    c14.pos[2] -= 0.04;
+    c15.pos[2] -= 0.04;
+    c16.pos[2] -= 0.04;
+    c17.pos[2] -= 0.04;
+    c18.pos[2] -= 0.04;
+    c19.pos[2] -= 0.04;
+    c20.pos[2] -= 0.04;
+    c21.pos[2] -= 0.04;
+    c22.pos[2] -= 0.04;
+    c23.pos[2] -= 0.04;
+    c24.pos[2] -= 0.04;
+    c25.pos[2] -= 0.04;
+    c26.pos[2] -= 0.04;
+  }
+  if (timeupJet == 1) {// time up jet is called repeatedly
+    c.pos[1] = 0;
+    eye[1] = 8.0;
+    target[1] = 0.0;
+    isJetpack = 0;
+    timeupJet = 0.5;
+    console.log('LOL');
+  }
+  if (isJetpack == 1 || isJetpack == 0.5) { // count started
+     c.pos[1] = 10;
+     eye[1] = 18.0;
+     target[1] = c.pos[1];
+   }
    if (isJump == 1) {
      if(c.pos[1] > 0) {
        gravity -= 0.001;
@@ -214,7 +241,7 @@ document.addEventListener('keydown', function(event) {
         c.pos[0] += xvelocity;
     }
     else if(event.keyCode == 38) { //up
-      if (isJump == 0) {
+      if (isJump == 0 && isJetpack == 0) {
         c.pos[1] += yvelocity;
         isJump = 1;
       }
@@ -363,7 +390,10 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
     if(c27.load == true) {
       c27.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
     }
-    if(timeupPol == 0) {
+    if(c29.load == true && isJetpack == 0) {
+      c29.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(timeupPol == 0 || quiteGame == 1) {
       if(c28.load == true) {
         c28.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
       }
@@ -371,10 +401,19 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
 
 }
 function detect_collision_x() {
-  if (Math.abs(c.pos[0] - c1.pos[0]) <= 0.5) {
+  if (Math.abs(c.pos[0] - c1.pos[0]) <= 0.5) {// right train
     if (Math.abs(c.pos[2] - c1.pos[2]) <= 3.0) {
       if (c.pos[1] == c1.pos[1]) { // height same that means it has collided in x direction (whenever hit reduce the player's speed for the next 5 seconds)
-          c.pos[0] -= 2;
+        c.pos[0] -= 2;
+        if (timeupPol == 1) {
+          countTimePol = 0;
+          timeupPol = 0;
+        }
+        else {// catch the prisoner
+          c28.pos[0] = c.pos[0];
+          c28.pos[2] = c.pos[2];
+          quiteGame = 1;
+        }
       }
       else {
         if (Math.abs(c.pos[1] - c1.pos[1]) <= 2.5) { // y collision that means it stays on top
@@ -383,15 +422,32 @@ function detect_collision_x() {
       }
     }
   }
-  if (Math.abs(c.pos[0] - c27.pos[0]) <= 0.5) {
+  if (Math.abs(c.pos[0] - c27.pos[0]) <= 0.5) {// left train
     if (Math.abs(c.pos[2] - c27.pos[2]) <= 3.0) {
       if (c.pos[1] == c27.pos[1]) { // height same that means it has collided in x direction (whenever hit reduce the player's speed for the next 5 seconds)
           c.pos[0] += 2;
+          if (timeupPol == 1) {
+            countTimePol = 0;
+            timeupPol = 0;
+          }
+          else {
+            c28.pos[0] = c.pos[0];
+            c28.pos[2] = c.pos[2];
+            quiteGame = 1;
+          }
       }
       else {
         if (Math.abs(c.pos[1] - c27.pos[1]) <= 2.5) { // y collision that means it stays on top
             c.pos[1] = c27.pos[1] + 2.5;
         }
+      }
+    }
+  }
+  if (Math.abs(c.pos[0] - c29.pos[0]) <= 0.5) {
+    if (Math.abs(c.pos[2] - c29.pos[2]) <= 0.5) {
+      if (c.pos[1] == c29.pos[1]) { // same height
+        isJetpack = 1;
+        timeupJet = 0;
       }
     }
   }
