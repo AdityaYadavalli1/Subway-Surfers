@@ -102,7 +102,7 @@ let police = class {
             programInfo.uniformLocations.modelViewMatrix,
             false,
             modelViewMatrix);
-        gl.uniform1f(programInfo.uniformLocations.flash, flash);
+        gl.uniform1f(programInfo.uniformLocations.flash, 1.0);
         gl.uniform1f(programInfo.uniformLocations.greyCode, greyCode);
         gl.bindTexture(gl.TEXTURE_2D, this.material.texture);
         {

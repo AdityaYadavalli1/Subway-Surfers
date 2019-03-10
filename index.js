@@ -8,7 +8,7 @@ var c2;
 var c3;
 var c4, c5, c6, c7, c8, c9, c10, c11, c12, c13, c14, c15, c16, c17, c18, c19, c20, c21, c22, c23, c24, c25, c26, c27, c28, c29, c30;
 var cu;
-var isJetpack = 0, isShoe = 0;
+var isJetpack = 0, isShoe = 0, isShoe0 = 0, isShoe1 = 0, isShoe2 = 0, isShoe3 = 0, isJetpack0 = 0, isJetpack1 = 0;
 var isJump = 0;
 var flash = 1.0;
 var invertflash = 0;
@@ -16,7 +16,10 @@ var invertgreyCode = 0;
 var greyCode = 0;
 var coins = [];
 var coinsCollide = [];
+var shoes = [];
+var shoesCollide = [];
 var quiteGame = 0;
+var score = 0;
 var timeup = 1, timeupPol = 0, timeupJet = 0, timeupShoe = 0;
 var countTime = 0, countTimeJet = 0, countTimePol = 0, countTimeShoe = 0;
 var up = [0.0, 1.0, 0.0];
@@ -35,7 +38,21 @@ function main() {
   c28.start(gl);
   c29 = new jetpack(gl, [0.0, 0.0, -15.0],[10.0, 10.0, 10.0]);
   c29.start(gl);
+  c51 = new jetpack(gl, [2.0, 0.0, -33.0],[10.0, 10.0, 10.0]);
+  c51.start(gl);
   c30 = new coin(gl, [0.0, 0.0, -13.0],[5.0, 5.0, 5.0]);
+  c30.start(gl);
+  coins.push(c30);
+  coinsCollide.push(0)
+  c30 = new coin(gl, [2.0, 0.0, -23.0],[5.0, 5.0, 5.0]);
+  c30.start(gl);
+  coins.push(c30);
+  coinsCollide.push(0)
+  c30 = new coin(gl, [-2.0, 0.0, -26.0],[5.0, 5.0, 5.0]);
+  c30.start(gl);
+  coins.push(c30);
+  coinsCollide.push(0)
+  c30 = new coin(gl, [0.0, 0.0, -29.0],[5.0, 5.0, 5.0]);
   c30.start(gl);
   coins.push(c30);
   coinsCollide.push(0)
@@ -116,12 +133,28 @@ function main() {
   c25.start(gl);
   c26 = new railroad(gl, [-2.0, -3.0, -16.0], [0.03, 0.05, 0.05])
   c26.start(gl);
-  c41 = new shoes(gl, [-2.0, 0.0, -13.0],[5.0, 5.0, 5.0])
+  c41 = new shoe(gl, [-2.0, 0.0, -13.0],[5.0, 5.0, 5.0])
   c41.start(gl);
+  c44 = new shoe(gl, [0.0, 0.0, -16.0],[5.0, 5.0, 5.0])
+  c44.start(gl);
+  c45 = new shoe(gl, [-2.0, 0.0, -28.0],[5.0, 5.0, 5.0])
+  c45.start(gl);
+  c46 = new shoe(gl, [0.0, 0.0, -35.0],[5.0, 5.0, 5.0])
+  c46.start(gl);
+  // c41 = new shoes(gl, [-2.0, 0.0, -13.0],[5.0, 5.0, 5.0])
+  // c41.start(gl);
   c42 = new banana(gl, [-2.0, 0.0, -9.0],[0.3, 0.3, 0.3])
   c42.start(gl);
+  c47 = new banana(gl, [2.0, 0.0, -19.0],[0.3, 0.3, 0.3])
+  c47.start(gl);
+  c48 = new banana(gl, [0.0, 0.0, -32.0],[0.3, 0.3, 0.3])
+  c48.start(gl);
+  c49 = new banana(gl, [-2.0, 0.0, -37.0],[0.3, 0.3, 0.3])
+  c49.start(gl);
   c43 = new trash(gl, [2.0, 0.0, -9.0],[0.1, 0.1, 0.1])
   c43.start(gl);
+  c50 = new trash(gl, [0.0, 0.0, -21.0],[0.1, 0.1, 0.1])
+  c50.start(gl);
   if (!gl) {
     alert('Unable to initialize WebGL. Your browser or machine may not support it.');
     return;
@@ -207,7 +240,9 @@ function main() {
 // make any tick changes here
 var gravity = 0;
 function tickelements() {
-
+  if (c.pos[2] <= -40.0) {
+    quiteGame = 1
+  }
   if (quiteGame == 0) {
     c.pos[2] -= 0.04;
     c28.pos[2] -= 0.04;
@@ -247,8 +282,11 @@ function tickelements() {
     c39.pos[2] -= 0.04;
     c40.pos[2] -= 0.04;
 
-
   }
+  else {
+    document.getElementById('quit').innerHTML = "Game Over"
+  }
+  document.getElementById('score').innerHTML = "Score: " + score
   if (timeupJet == 1) {// time up jet is called repeatedly
     c.pos[1] = 0;
     eye[1] = 8.0;
@@ -462,8 +500,11 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
     if(c27.load == true) {
       c27.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
     }
-    if(c29.load == true && isJetpack == 0) {
+    if(c29.load == true && isJetpack0 == 0) {
       c29.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c51.load == true && isJetpack1 == 0) {
+      c51.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
     }
     if(timeupPol == 0 || quiteGame == 1) {
       if(c28.load == true) {
@@ -500,9 +541,24 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
     if(c40.load == true) {
       c40.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
     }
-    if(isShoe == 0) {
+    if(isShoe0 == 0) {
       if(c41.load == true) {
         c41.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+      }
+    }
+    if(isShoe1 == 0) {
+      if(c44.load == true) {
+        c44.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+      }
+    }
+    if(isShoe2 == 0) {
+      if(c45.load == true) {
+        c45.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+      }
+    }
+    if(isShoe3 == 0) {
+      if(c46.load == true) {
+        c46.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
       }
     }
     if(c42.load == true) {
@@ -511,12 +567,28 @@ function drawScene(gl, programInfo, buffers, deltaTime) {
     if(c43.load == true) {
       c43.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
     }
+    if(c47.load == true) {
+      c47.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c48.load == true) {
+      c48.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c49.load == true) {
+      c49.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    if(c50.load == true) {
+      c50.drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
+    }
+    scoretemp = 0
     for (let i = 0; i < coins.length; i++) {
       if (coinsCollide[i] == 0) {
         coins[i].drawCube(gl, viewProjectionMatrix, programInfo, deltaTime, flash, greyCode);
       }
+      else {
+        scoretemp += 1
+      }
     }
-
+    score = scoretemp*10
 }
 function detect_collision_x() {
   if (Math.abs(c.pos[0] - c1.pos[0]) <= 0.5) {// right train
@@ -565,6 +637,16 @@ function detect_collision_x() {
     if (Math.abs(c.pos[2] - c29.pos[2]) <= 0.5) {
       if (c.pos[1] == c29.pos[1]) { // same height
         isJetpack = 1;
+        isJetpack0 = 1;
+        timeupJet = 0;
+      }
+    }
+  }
+  if (Math.abs(c.pos[0] - c51.pos[0]) <= 0.5) { // jetpack
+    if (Math.abs(c.pos[2] - c51.pos[2]) <= 0.5) {
+      if (c.pos[1] == c51.pos[1]) { // same height
+        isJetpack = 1;
+        isJetpack1 = 1;
         timeupJet = 0;
       }
     }
@@ -574,6 +656,7 @@ function detect_collision_x() {
       if (Math.abs(c.pos[2] - coins[i].pos[2]) <= 0.5) {
         if (c.pos[1] == coins[i].pos[1]) { // same height
           coinsCollide[i] = 1;
+          // score += 10;
         }
       }
     }
@@ -610,22 +693,86 @@ function detect_collision_x() {
       if (Math.abs(c.pos[2] - c41.pos[2]) <= 0.6) {
         if (c.pos[1] == c41.pos[1]) { // same height
           isShoe = 1;
+          isShoe0 = 1
+          timeupShoe = 0;
+        }
+      }
+    }
+    if (Math.abs(c.pos[0] - c44.pos[0]) <= 0.6) { // shoe
+      if (Math.abs(c.pos[2] - c44.pos[2]) <= 0.6) {
+        if (c.pos[1] == c44.pos[1]) { // same height
+          isShoe = 1;
+          isShoe1 = 1
+          timeupShoe = 0;
+        }
+      }
+    }
+    if (Math.abs(c.pos[0] - c45.pos[0]) <= 0.6) { // shoe
+      if (Math.abs(c.pos[2] - c45.pos[2]) <= 0.6) {
+        if (c.pos[1] == c45.pos[1]) { // same height
+          isShoe = 1;
+          isShoe2 = 1
+          timeupShoe = 0;
+        }
+      }
+    }
+    if (Math.abs(c.pos[0] - c46.pos[0]) <= 0.6) { // shoe
+      if (Math.abs(c.pos[2] - c46.pos[2]) <= 0.6) {
+        if (c.pos[1] == c46.pos[1]) { // same height
+          isShoe = 1;
+          isShoe3 = 1
           timeupShoe = 0;
         }
       }
     }
     if (Math.abs(c.pos[0] - c42.pos[0]) <= 0.6) { // peel
       if (Math.abs(c.pos[2] - c42.pos[2]) <= 0.6) {
-        if (c.pos[1] == c41.pos[1]) { // same height
+        if (c.pos[1] == c42.pos[1]) { // same height
           c28.pos[0] = c.pos[0];
           c28.pos[2] = c.pos[2];
           quiteGame = 1;
         }
       }
     }
-    if (Math.abs(c.pos[0] - c43.pos[0]) <= 0.6) { // peel
+    if (Math.abs(c.pos[0] - c47.pos[0]) <= 0.6) { // peel
+      if (Math.abs(c.pos[2] - c47.pos[2]) <= 0.6) {
+        if (c.pos[1] == c47.pos[1]) { // same height
+          c28.pos[0] = c.pos[0];
+          c28.pos[2] = c.pos[2];
+          quiteGame = 1;
+        }
+      }
+    }
+    if (Math.abs(c.pos[0] - c48.pos[0]) <= 0.6) { // peel
+      if (Math.abs(c.pos[2] - c48.pos[2]) <= 0.6) {
+        if (c.pos[1] == c48.pos[1]) { // same height
+          c28.pos[0] = c.pos[0];
+          c28.pos[2] = c.pos[2];
+          quiteGame = 1;
+        }
+      }
+    }
+    if (Math.abs(c.pos[0] - c49.pos[0]) <= 0.6) { // peel
+      if (Math.abs(c.pos[2] - c49.pos[2]) <= 0.6) {
+        if (c.pos[1] == c49.pos[1]) { // same height
+          c28.pos[0] = c.pos[0];
+          c28.pos[2] = c.pos[2];
+          quiteGame = 1;
+        }
+      }
+    }
+    if (Math.abs(c.pos[0] - c43.pos[0]) <= 0.6) { // TNT
       if (Math.abs(c.pos[2] - c43.pos[2]) <= 0.6) {
-        if (c.pos[1] == c41.pos[1]) { // same height
+        if (c.pos[1] == c43.pos[1]) { // same height
+          c28.pos[0] = c.pos[0];
+          c28.pos[2] = c.pos[2];
+          quiteGame = 1;
+        }
+      }
+    }
+    if (Math.abs(c.pos[0] - c50.pos[0]) <= 0.6) { // TNT
+      if (Math.abs(c.pos[2] - c50.pos[2]) <= 0.6) {
+        if (c.pos[1] == c50.pos[1]) { // same height
           c28.pos[0] = c.pos[0];
           c28.pos[2] = c.pos[2];
           quiteGame = 1;
