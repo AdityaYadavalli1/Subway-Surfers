@@ -1,13 +1,18 @@
 ## WebGL
 
+### To Run:
+`firefox index.html`
+
 ### Controls:
 
-Up to jump
+<kbd>up</kbd> to jump
 
-Down to duck
+<kbd>down</kbd> to duck
 
-left and right to go left and right respectively
+<kbd>left</kbd> and <kbd>right</kbd> to go left and right respectively
 
-x to greyscale
+<kbd>x</kbd> to greyscale
 
-c to flash the walls 
+<kbd>c</kbd> to flash the walls
+
+**Note: Make sure you have firefox installed** 
